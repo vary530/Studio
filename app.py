@@ -20,46 +20,76 @@ st.set_page_config(
 )
 
 # ==========================================
-# 🌟 1. 溫和且絕對有效的背景與防白邊 CSS
+# 🌟 1. 終極暴力 CSS：鎖定螢幕、模糊背景、獵殺圖示
 # ==========================================
-# 確保背景圖片存在，如果找不到會跳出紅色警告，而不是直接黑畫面！
 bg_path = "background.png" 
-
+bg_b64 = ""
 if os.path.exists(bg_path):
     with open(bg_path, "rb") as f:
         bg_b64 = base64.b64encode(f.read()).decode()
+
+st.markdown(f"""
+<style>
+    /* 👉 1. 終極鎖死畫面，拒絕 iOS 橡皮筋回彈與白邊 */
+    html, body {{
+        position: fixed !important;
+        overflow: hidden !important; 
+        width: 100vw !important;
+        height: 100vh !important;
+        background-color: #000000 !important; /* 確保底色是純黑 */
+        touch-action: none !important; /* 沒收瀏覽器滑動權限 */
+        -webkit-overflow-scrolling: auto !important;
+    }}
     
-    st.markdown(f"""
-    <style>
-        /* 👉 1. 將背景圖片鎖定在最深層的容器 */
-        [data-testid="stAppViewContainer"] {{
-            background-image: url("data:image/png;base64,{bg_b64}") !important;
-            background-size: cover !important;
-            background-position: center !important;
-            background-repeat: no-repeat !important;
-            background-attachment: fixed !important;
-        }}
-        
-        /* 👉 2. 讓頂部選單變透明，不再有白條 */
-        [data-testid="stHeader"] {{
-            background: rgba(0,0,0,0) !important;
-        }}
-        
-        /* 👉 3. 調整畫面邊距，不要太擠 */
-        .block-container {{
-            padding-top: 3rem !important;
-            padding-bottom: 2rem !important;
-            padding-left: 1rem !important;
-            padding-right: 1rem !important;
-            max-width: 100% !important;
-        }}
-    </style>
-    """, unsafe_allow_html=True)
-else:
-    # 如果路徑錯誤或檔名不對，網頁頂部會顯示這行紅字幫助我們除錯
-    st.error(f"⚠️ 找不到背景圖片：{bg_path}，請確認檔名與大小寫！")
+    /* 開放內部容器可以滑動 (如果內容太長的話)，但不影響外層 */
+    [data-testid="stAppViewContainer"] {{
+        background-color: transparent !important;
+        overflow-y: auto !important; 
+        height: 100vh !important;
+        -webkit-overflow-scrolling: touch !important;
+    }}
 
+    /* 👉 2. 完美模糊背景：使用偽元素放在最底層 */
+    [data-testid="stAppViewContainer"]::before {{
+        content: "";
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-image: url("data:image/png;base64,{bg_b64}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        filter: blur(8px) brightness(0.7); /* 調整 8px 改變模糊度，brightness 讓它變暗一點襯托文字 */
+        -webkit-filter: blur(8px) brightness(0.7);
+        transform: scale(1.1); /* 放大一點點，避免模糊後邊緣出現白邊 */
+        z-index: -1;
+    }}
 
+    /* 👉 3. 隱藏頂部選單與邊距調整 */
+    [data-testid="stHeader"] {{
+        display: none !important;
+    }}
+    .block-container {{
+        padding-top: 3rem !important;
+        padding-bottom: 3rem !important;
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
+        max-width: 100% !important;
+        z-index: 1; /* 確保內容在背景之上 */
+    }}
+
+    /* 👉 4. 終極無差別獵殺右下角圖示 (如果這招還殺不掉，就是被 Streamlit 系統強制保護了) */
+    [data-testid="stViewerBadge"], 
+    [class^="viewerBadge"], 
+    div[class*="viewerBadge"], 
+    iframe[title*="streamlit"],
+    #MainMenu, footer {{
+        display: none !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        visibility: hidden !important;
+    }}
+</style>
+""", unsafe_allow_html=True)
 
 # 嘗試匯入 PDF 模組
 try:
@@ -69,7 +99,7 @@ except ImportError:
     PDF_MODULE_ACTIVE = False
 
 # ==========================================
-# 1. 全域變數與設定
+# 2. 全域變數與設定 (接下來接你原本後面的程式碼...)
 # ==========================================
 
 # 字體縮小邏輯
@@ -1013,6 +1043,7 @@ with tab3:
                             
 
                 st.markdown("<hr style='margin: 0.5em 0; border-color: rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
+
 
 
 
