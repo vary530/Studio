@@ -10,7 +10,7 @@ import os
 import base64
 
 # ==========================================
-# 🌟 0. 頁面初始化與圖示設定 (這必須是第一個 st 指令)
+# 🌟 0. 頁面初始化
 # ==========================================
 icon_image = None
 try:
@@ -21,46 +21,59 @@ except Exception:
 st.set_page_config(
     page_title="物調Studio",
     page_icon=icon_image if icon_image else "icon.png",
-    layout="wide",  # 使用 wide 讓畫面更有機會填滿手機螢幕
+    layout="wide",
     initial_sidebar_state="collapsed"
 )
 
 # ==========================================
-# 🌟 1. 注入 PWA Meta Tags 與 CSS 黑科技
+# 🌟 1. 救回背景圖與終極 CSS 黑科技
 # ==========================================
-apple_touch_icon_link = ""
-try:
-    with open("icon.png", "rb") as f:
-        icon_b64 = base64.b64encode(f.read()).decode()
-    apple_touch_icon_link = f'<link rel="apple-touch-icon" href="data:image/png;base64,{icon_b64}">'
-except Exception:
-    pass
+# 將背景圖轉為 Base64 編碼，強行注入網頁最底層
+def get_base64_image(file_path):
+    try:
+        with open(file_path, "rb") as f:
+            return base64.b64encode(f.read()).decode()
+    except Exception:
+        return ""
+
+bg_b64 = get_base64_image("background.png") # 確保檔名是您的背景圖名稱
 
 st.markdown(f"""
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="物調Studio">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-{apple_touch_icon_link}
-
 <style>
-    /* 🔥 消除白邊與隱藏選單的黑科技 🔥 */
+    /* 👉 1. 完美救回您的專屬背景圖，並讓它填滿螢幕 */
+    .stApp {{
+        background-image: url("data:image/png;base64,{bg_b64}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }}
+    
+    /* 👉 2. 徹底隱藏右下角討厭的 Streamlit 紅船與您的頭像 (Viewer Badge) */
+    .viewerBadge_container, .viewerBadge_link, [data-testid="stViewerBadge"] {{
+        display: none !important;
+        visibility: hidden !important;
+    }}
+
+    /* 👉 3. 隱藏頂部白底選單與底部 Footer */
     [data-testid="stHeader"] {{
-        visibility: hidden !important; 
+        background: rgba(0,0,0,0) !important; /* 強制變透明，消滅頂部白條 */
         height: 0px !important;
+        visibility: hidden !important; 
     }}
-    footer {{ visibility: hidden !important; }}
+    footer {{ display: none !important; }}
+
+    /* 👉 4. 消除四周白邊，讓底層透出背景圖 */
     html, body, [data-testid="stAppViewContainer"] {{
-        overscroll-behavior: none !important; /* 禁止回彈 */
-        background-color: #000000 !important; /* 背景設為純黑 */
+        overscroll-behavior: none !important; /* 盡量減少回彈 */
+        background-color: transparent !important; 
     }}
+    
     .block-container {{
-        padding-top: 0rem !important;
+        padding-top: 2rem !important; /* 留一點點空間給手機瀏海，避免字被擋住 */
         padding-bottom: 0rem !important;
         padding-left: 0rem !important;
         padding-right: 0rem !important;
-        margin-top: 0rem !important;
         max-width: 100% !important;
     }}
 </style>
@@ -1019,3 +1032,4 @@ with tab3:
                             
 
                 st.markdown("<hr style='margin: 0.5em 0; border-color: rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
+
