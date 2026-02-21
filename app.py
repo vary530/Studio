@@ -974,12 +974,31 @@ with tab2:
             output = io.BytesIO()
             wb.save(output)
             output.seek(0)
-            # --- 新增：偷偷備份一份到 outputs 資料夾 ---
+# --- 新增：偷偷備份一份到 outputs 資料夾 ---
             with open(f"outputs/{download_filename}", "wb") as f:
                 f.write(output.getvalue())
 
             st.success(f"Excel 檔案製作完成！檔名：{download_filename}")
-            st.download_button("下載物調表", output, download_filename, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            
+            # 👇 --- 替換開始：改用防卡死的 HTML 下載按鈕 --- 👇
+            import base64
+            
+            # 將 Excel 檔案轉成 Base64 編碼
+            b64 = base64.b64encode(output.getvalue()).decode()
+            
+            # 製作專屬下載連結 (target="_blank" 是防卡死的關鍵)
+            download_html = f"""
+            <a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" 
+               download="{download_filename}" 
+               target="_blank" 
+               style="display: block; width: 100%; padding: 0.5rem 1rem; background-color: #FF4B4B; color: white; text-align: center; text-decoration: none; border-radius: 0.5rem; font-weight: 600; margin-top: 1rem;">
+               點擊下載 Excel 底稿
+            </a>
+            """
+            
+            st.markdown(download_html, unsafe_allow_html=True)
+            st.caption("提示：如果點擊後進入全螢幕預覽，請按左上角的「完成(Done)」或將手指放在螢幕【最左側邊緣】向右滑動返回！")
+            # 👆 --- 替換結束 --- 👆
             
         except FileNotFoundError: st.error("找不到 `template.xlsx`。")
         except Exception as e: st.error(f"發生錯誤: {e}")
@@ -1042,6 +1061,7 @@ with tab3:
                             
 
                 st.markdown("<hr style='margin: 0.5em 0; border-color: rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
+
 
 
 
