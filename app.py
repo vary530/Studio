@@ -36,20 +36,23 @@ st.markdown(f"""
         overflow: hidden !important; 
         width: 100vw !important;
         height: 100vh !important;
+        height: 100dvh !important; /* 🔥 新增：針對 iOS 動態高度鎖死 */
         background-color: #000000 !important; /* 確保底色是純黑 */
         touch-action: none !important; /* 沒收瀏覽器滑動權限 */
         -webkit-overflow-scrolling: auto !important;
     }}
     
-    /* 開放內部容器可以滑動 (如果內容太長的話)，但不影響外層 */
-    [data-testid="stAppViewContainer"] {{
+    /* 👉 2. 強制所有分頁內部容器撐滿 100% 螢幕，沒內容也要撐起來！ */
+    [data-testid="stAppViewContainer"], .stApp {{
         background-color: transparent !important;
         overflow-y: auto !important; 
         height: 100vh !important;
+        height: 100dvh !important; /* 🔥 新增：強制拉高 */
+        min-height: 100dvh !important; /* 🔥 新增：讓矮個子分頁也能撐滿螢幕 */
         -webkit-overflow-scrolling: touch !important;
     }}
 
-    /* 👉 2. 完美模糊背景：使用偽元素放在最底層 */
+    /* 👉 3. 完美模糊背景：使用偽元素放在最底層 */
     [data-testid="stAppViewContainer"]::before {{
         content: "";
         position: fixed;
@@ -58,26 +61,28 @@ st.markdown(f"""
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
-        filter: blur(8px) brightness(0.7); /* 調整 8px 改變模糊度，brightness 讓它變暗一點襯托文字 */
+        filter: blur(8px) brightness(0.7); 
         -webkit-filter: blur(8px) brightness(0.7);
-        transform: scale(1.1); /* 放大一點點，避免模糊後邊緣出現白邊 */
+        transform: scale(1.1); 
         z-index: -1;
     }}
 
-    /* 👉 3. 隱藏頂部選單與邊距調整 */
+    /* 👉 4. 隱藏頂部選單與邊距調整 (避開上面那條白白的) */
     [data-testid="stHeader"] {{
         display: none !important;
     }}
     .block-container {{
-        padding-top: 3rem !important;
+        /* 🔥 把 top 加大，把內容往下推，避開 iOS 的上方狀態列 */
+        padding-top: 4rem !important; 
         padding-bottom: 3rem !important;
         padding-left: 1.5rem !important;
         padding-right: 1.5rem !important;
         max-width: 100% !important;
-        z-index: 1; /* 確保內容在背景之上 */
+        min-height: 100vh !important; /* 🔥 新增：強制內容區塊也撐高 */
+        z-index: 1; 
     }}
 
-    /* 👉 4. 終極無差別獵殺右下角圖示 (如果這招還殺不掉，就是被 Streamlit 系統強制保護了) */
+    /* 👉 5. 終極無差別獵殺右下角圖示 */
     [data-testid="stViewerBadge"], 
     [class^="viewerBadge"], 
     div[class*="viewerBadge"], 
@@ -90,7 +95,6 @@ st.markdown(f"""
     }}
 </style>
 """, unsafe_allow_html=True)
-
 # 嘗試匯入 PDF 模組
 try:
     from services.pdf_scanner import extract_text_from_pdf
@@ -1061,6 +1065,7 @@ with tab3:
                             
 
                 st.markdown("<hr style='margin: 0.5em 0; border-color: rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
+
 
 
 
