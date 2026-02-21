@@ -12,23 +12,16 @@ import base64
 # ==========================================
 # 🌟 0. 頁面初始化
 # ==========================================
-icon_image = None
-try:
-    icon_image = Image.open("icon.png")
-except Exception:
-    pass
-
 st.set_page_config(
     page_title="物調Studio",
-    page_icon=icon_image if icon_image else "icon.png",
+    page_icon="🏠",  # 這裡改用 Emoji 比較保險，避免找不到圖檔報錯
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
 # ==========================================
-# 🌟 1. 救回背景圖與終極 CSS 黑科技
+# 🌟 1. 終極 CSS 黑科技 (防白邊、殺圖示、完美滿版)
 # ==========================================
-# 將背景圖轉為 Base64 編碼，強行注入網頁最底層
 def get_base64_image(file_path):
     try:
         with open(file_path, "rb") as f:
@@ -36,44 +29,43 @@ def get_base64_image(file_path):
     except Exception:
         return ""
 
-bg_b64 = get_base64_image("background.png") # 確保檔名是您的背景圖名稱
+bg_b64 = get_base64_image("background.png") 
 
 st.markdown(f"""
 <style>
-    /* 👉 1. 完美救回您的專屬背景圖，並讓它填滿螢幕 */
-    .stApp {{
-        background-image: url("data:image/png;base64,{bg_b64}");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }}
-    
-    /* 👉 2. 徹底隱藏右下角討厭的 Streamlit 紅船與您的頭像 (Viewer Badge) */
-    .viewerBadge_container, .viewerBadge_link, [data-testid="stViewerBadge"] {{
-        display: none !important;
-        visibility: hidden !important;
-    }}
-
-    /* 👉 3. 隱藏頂部白底選單與底部 Footer */
-    [data-testid="stHeader"] {{
-        background: rgba(0,0,0,0) !important; /* 強制變透明，消滅頂部白條 */
-        height: 0px !important;
-        visibility: hidden !important; 
-    }}
+    /* 👉 1. 徹底消滅所有 Streamlit 預設介面與礙眼圖示 (全網羅追殺) */
+    header[data-testid="stHeader"] {{ display: none !important; }}
+    [data-testid="stToolbar"] {{ display: none !important; }}
+    [data-testid="stDecoration"] {{ display: none !important; }}
+    [data-testid="stStatusWidget"] {{ display: none !important; }}
+    [data-testid="stViewerBadge"] {{ display: none !important; visibility: hidden !important; }}
+    #MainMenu {{ display: none !important; }}
     footer {{ display: none !important; }}
+    .viewerBadge_container {{ display: none !important; }}
+    .viewerBadge_link {{ display: none !important; }}
 
-    /* 👉 4. 消除四周白邊，讓底層透出背景圖 */
-    html, body, [data-testid="stAppViewContainer"] {{
-        overscroll-behavior: none !important; /* 盡量減少回彈 */
-        background-color: transparent !important; 
+    /* 👉 2. 解決滑動白邊與回彈 (把最底層全部漆成黑色) */
+    html, body, [data-testid="stAppViewContainer"], .stApp {{
+        background-color: #000000 !important; /* 確保回彈露出的底色是黑的 */
+        overscroll-behavior-y: none !important; /* 強制禁止 iOS 橡皮筋回彈 */
+        -webkit-overflow-scrolling: touch !important;
     }}
     
+    /* 👉 3. 完美注入您的專屬背景圖 */
+    .stApp {{
+        background-image: url("data:image/png;base64,{bg_b64}") !important;
+        background-size: cover !important;
+        background-position: center top !important;
+        background-attachment: fixed !important;
+        background-repeat: no-repeat !important;
+    }}
+
+    /* 👉 4. 解決左右太擠的問題，並為 iPhone 瀏海留出空間 */
     .block-container {{
-        padding-top: 2rem !important; /* 留一點點空間給手機瀏海，避免字被擋住 */
-        padding-bottom: 0rem !important;
-        padding-left: 0rem !important;
-        padding-right: 0rem !important;
+        padding-top: 4rem !important; /* 頂部多留一點，避開手機時間跟電量 */
+        padding-bottom: 3rem !important; /* 底部多留一點，避開底線 */
+        padding-left: 1.5rem !important; /* 左右加回舒適邊距，不再擠成一團 */
+        padding-right: 1.5rem !important;
         max-width: 100% !important;
     }}
 </style>
@@ -1032,4 +1024,5 @@ with tab3:
                             
 
                 st.markdown("<hr style='margin: 0.5em 0; border-color: rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
+
 
