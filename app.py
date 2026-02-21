@@ -13,8 +13,8 @@ import base64
 # 🌟 0. 頁面初始化
 # ==========================================
 st.set_page_config(
-    page_title="物調Studio",
-    page_icon="🏠",
+    page_title="Studio",
+    page_icon="icon.png",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -1043,6 +1043,7 @@ with tab3:
                             
 
                 st.markdown("<hr style='margin: 0.5em 0; border-color: rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
+
 
 
 
