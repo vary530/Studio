@@ -831,23 +831,21 @@ with tab2:
                 
             safe_name = str(input_vars.get("案名", "未命名")).strip()
 
-            # --- 新增：偷偷備份一份到 outputs 資料夾 ---
+# --- 新增：偷偷備份一份到 outputs 資料夾 ---
             with open(f"outputs/{safe_name}_物調卡.jpg", "wb") as f:
                 f.write(img_bytes.getvalue())
 
-            st.success(" 物調表圖卡繪製成功！")
-            st.download_button(# 假設產生的圖片叫做 img_byte_arr (您的程式碼可能是這個變數)
-
-# 1. 直接把圖片顯示在畫面上
-st.image(img_byte_arr, use_column_width=True)
-
-# 2. 給同事們一個溫馨的小提示
-st.success(" 物調卡產生成功！")
-st.info(" 手機版用戶：請直接「長按上方圖片」 ➜ 選擇「儲存到照片」或「分享」即可！")
-            )
+            # 1. 成功提示
+            st.success("🎉 物調表圖卡繪製成功！")
+            
+            # 2. 直接在畫面上顯示圖片 (變數換成您專屬的 img_bytes)
+            st.image(img_bytes, use_column_width=True)
+            
+            # 3. 給手機版用戶的溫馨提示
+            st.info("📱 手機版用戶：請直接「長按上方圖片」 ➜ 選擇「儲存到相簿」或「分享」即可！")
+            
         except Exception as e:
             st.error(f"產生圖片時發生錯誤: {e}")
-
     # ==========================
     # 觸發功能 2：產生物調表 (Excel)
     # ==========================
@@ -1044,6 +1042,7 @@ with tab3:
                             
 
                 st.markdown("<hr style='margin: 0.5em 0; border-color: rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
+
 
 
 
