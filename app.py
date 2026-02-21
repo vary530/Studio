@@ -14,62 +14,51 @@ import base64
 # ==========================================
 st.set_page_config(
     page_title="物調Studio",
-    page_icon="🏠",  # 這裡改用 Emoji 比較保險，避免找不到圖檔報錯
+    page_icon="🏠",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
 # ==========================================
-# 🌟 1. 終極 CSS 黑科技 (防白邊、殺圖示、完美滿版)
+# 🌟 1. 溫和且絕對有效的背景與防白邊 CSS
 # ==========================================
-def get_base64_image(file_path):
-    try:
-        with open(file_path, "rb") as f:
-            return base64.b64encode(f.read()).decode()
-    except Exception:
-        return ""
+# 確保背景圖片存在，如果找不到會跳出紅色警告，而不是直接黑畫面！
+bg_path = "background.png" 
 
-bg_b64 = get_base64_image("background.png") 
-
-st.markdown(f"""
-<style>
-    /* 👉 1. 徹底消滅所有 Streamlit 預設介面與礙眼圖示 (全網羅追殺) */
-    header[data-testid="stHeader"] {{ display: none !important; }}
-    [data-testid="stToolbar"] {{ display: none !important; }}
-    [data-testid="stDecoration"] {{ display: none !important; }}
-    [data-testid="stStatusWidget"] {{ display: none !important; }}
-    [data-testid="stViewerBadge"] {{ display: none !important; visibility: hidden !important; }}
-    #MainMenu {{ display: none !important; }}
-    footer {{ display: none !important; }}
-    .viewerBadge_container {{ display: none !important; }}
-    .viewerBadge_link {{ display: none !important; }}
-
-    /* 👉 2. 解決滑動白邊與回彈 (把最底層全部漆成黑色) */
-    html, body, [data-testid="stAppViewContainer"], .stApp {{
-        background-color: #000000 !important; /* 確保回彈露出的底色是黑的 */
-        overscroll-behavior-y: none !important; /* 強制禁止 iOS 橡皮筋回彈 */
-        -webkit-overflow-scrolling: touch !important;
-    }}
+if os.path.exists(bg_path):
+    with open(bg_path, "rb") as f:
+        bg_b64 = base64.b64encode(f.read()).decode()
     
-    /* 👉 3. 完美注入您的專屬背景圖 */
-    .stApp {{
-        background-image: url("data:image/png;base64,{bg_b64}") !important;
-        background-size: cover !important;
-        background-position: center top !important;
-        background-attachment: fixed !important;
-        background-repeat: no-repeat !important;
-    }}
+    st.markdown(f"""
+    <style>
+        /* 👉 1. 將背景圖片鎖定在最深層的容器 */
+        [data-testid="stAppViewContainer"] {{
+            background-image: url("data:image/png;base64,{bg_b64}") !important;
+            background-size: cover !important;
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+            background-attachment: fixed !important;
+        }}
+        
+        /* 👉 2. 讓頂部選單變透明，不再有白條 */
+        [data-testid="stHeader"] {{
+            background: rgba(0,0,0,0) !important;
+        }}
+        
+        /* 👉 3. 調整畫面邊距，不要太擠 */
+        .block-container {{
+            padding-top: 3rem !important;
+            padding-bottom: 2rem !important;
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+            max-width: 100% !important;
+        }}
+    </style>
+    """, unsafe_allow_html=True)
+else:
+    # 如果路徑錯誤或檔名不對，網頁頂部會顯示這行紅字幫助我們除錯
+    st.error(f"⚠️ 找不到背景圖片：{bg_path}，請確認檔名與大小寫！")
 
-    /* 👉 4. 解決左右太擠的問題，並為 iPhone 瀏海留出空間 */
-    .block-container {{
-        padding-top: 4rem !important; /* 頂部多留一點，避開手機時間跟電量 */
-        padding-bottom: 3rem !important; /* 底部多留一點，避開底線 */
-        padding-left: 1.5rem !important; /* 左右加回舒適邊距，不再擠成一團 */
-        padding-right: 1.5rem !important;
-        max-width: 100% !important;
-    }}
-</style>
-""", unsafe_allow_html=True)
 
 
 # 嘗試匯入 PDF 模組
@@ -1024,5 +1013,6 @@ with tab3:
                             
 
                 st.markdown("<hr style='margin: 0.5em 0; border-color: rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
+
 
 
