@@ -2,7 +2,7 @@ import streamlit as st
 import openpyxl
 from openpyxl.styles import Font, Alignment
 from openpyxl.drawing.image import Image as XLImage
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 import io
 import re
 import unicodedata
@@ -10,38 +10,62 @@ import os
 import base64
 
 # ==========================================
-# 0. PWA 設定與頁面初始化
+# 🌟 0. 頁面初始化與圖示設定 (這必須是第一個 st 指令)
 # ==========================================
 icon_image = None
 try:
     icon_image = Image.open("icon.png")
-except:
+except Exception:
     pass
 
 st.set_page_config(
-    page_title="物調studio",
-    page_icon=icon_image,
-    layout="wide",
+    page_title="物調Studio",
+    page_icon=icon_image if icon_image else "icon.png",
+    layout="wide",  # 使用 wide 讓畫面更有機會填滿手機螢幕
     initial_sidebar_state="collapsed"
 )
 
-# 注入 PWA Meta Tags
+# ==========================================
+# 🌟 1. 注入 PWA Meta Tags 與 CSS 黑科技
+# ==========================================
 apple_touch_icon_link = ""
 try:
     with open("icon.png", "rb") as f:
         icon_b64 = base64.b64encode(f.read()).decode()
     apple_touch_icon_link = f'<link rel="apple-touch-icon" href="data:image/png;base64,{icon_b64}">'
-except:
+except Exception:
     pass
 
 st.markdown(f"""
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="物調studio">
+<meta name="apple-mobile-web-app-title" content="物調Studio">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 {apple_touch_icon_link}
+
+<style>
+    /* 🔥 消除白邊與隱藏選單的黑科技 🔥 */
+    [data-testid="stHeader"] {{
+        visibility: hidden !important; 
+        height: 0px !important;
+    }}
+    footer {{ visibility: hidden !important; }}
+    html, body, [data-testid="stAppViewContainer"] {{
+        overscroll-behavior: none !important; /* 禁止回彈 */
+        background-color: #000000 !important; /* 背景設為純黑 */
+    }}
+    .block-container {{
+        padding-top: 0rem !important;
+        padding-bottom: 0rem !important;
+        padding-left: 0rem !important;
+        padding-right: 0rem !important;
+        margin-top: 0rem !important;
+        max-width: 100% !important;
+    }}
+</style>
 """, unsafe_allow_html=True)
+
 
 # 嘗試匯入 PDF 模組
 try:
@@ -993,4 +1017,5 @@ with tab3:
                     with st.expander("點擊預覽圖片 (長按圖片即可跳出手機功能列)"):
                         st.image(f_path, use_container_width=True)
                             
+
                 st.markdown("<hr style='margin: 0.5em 0; border-color: rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
