@@ -836,13 +836,14 @@ with tab2:
                 f.write(img_bytes.getvalue())
 
             st.success(" 物調表圖卡繪製成功！")
-            st.download_button(
-                label=" 點擊下載物調表 JPG 圖片",
-                data=img_bytes,
-                file_name=f"{safe_name}_物調卡.jpg",
-                mime="image/jpeg",
-                type="primary",
-                use_container_width=True
+            st.download_button(# 假設產生的圖片叫做 img_byte_arr (您的程式碼可能是這個變數)
+
+# 1. 直接把圖片顯示在畫面上
+st.image(img_byte_arr, use_column_width=True)
+
+# 2. 給同事們一個溫馨的小提示
+st.success(" 物調卡產生成功！")
+st.info(" 手機版用戶：請直接「長按上方圖片」 ➜ 選擇「儲存到照片」或「分享」即可！")
             )
         except Exception as e:
             st.error(f"產生圖片時發生錯誤: {e}")
@@ -1043,6 +1044,7 @@ with tab3:
                             
 
                 st.markdown("<hr style='margin: 0.5em 0; border-color: rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
+
 
 
 
