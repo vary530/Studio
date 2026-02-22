@@ -28,7 +28,15 @@ if os.path.exists(bg_path):
     with open(bg_path, "rb") as f:
         bg_b64 = base64.b64encode(f.read()).decode()
 
+# 👇 把 Meta 標籤跟 Style 全部包在同一個 st.markdown 裡面
 st.markdown(f"""
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#000000"> <meta name="apple-mobile-web-app-title" content="物調Studio">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+{apple_touch_icon_link}
+
 <style>
     /* 👉 1. 終極鎖死畫面，拒絕 iOS 橡皮筋回彈與白邊 */
     html, body {{
@@ -47,8 +55,8 @@ st.markdown(f"""
         background-color: transparent !important;
         overflow-y: auto !important; 
         height: 100vh !important;
-        height: 100dvh !important; /* 🔥 新增：強制拉高 */
-        min-height: 100dvh !important; /* 🔥 新增：讓矮個子分頁也能撐滿螢幕 */
+        height: 100dvh !important; 
+        min-height: 100dvh !important; 
         -webkit-overflow-scrolling: touch !important;
     }}
 
@@ -67,18 +75,17 @@ st.markdown(f"""
         z-index: -1;
     }}
 
-    /* 👉 4. 隱藏頂部選單與邊距調整 (避開上面那條白白的) */
+    /* 👉 4. 隱藏頂部選單與邊距調整 */
     [data-testid="stHeader"] {{
         display: none !important;
     }}
     .block-container {{
-        /* 🔥 把 top 加大，把內容往下推，避開 iOS 的上方狀態列 */
         padding-top: 4rem !important; 
         padding-bottom: 3rem !important;
         padding-left: 1.5rem !important;
         padding-right: 1.5rem !important;
         max-width: 100% !important;
-        min-height: 100vh !important; /* 🔥 新增：強制內容區塊也撐高 */
+        min-height: 100vh !important; 
         z-index: 1; 
     }}
 
@@ -567,6 +574,8 @@ with tab1:
                     st.session_state['pdf_cached_data'] = processed_data
                     
                     st.success("解析成功！資料已暫存。")
+
+                    st.markdown("<div style='height: 80vh; color: transparent;'>.</div>", unsafe_allow_html=True)
 
         # === 顯示掃描結果 (Persistent) ===
         if 'pdf_cached_data' in st.session_state and st.session_state['pdf_cached_data']:
@@ -1065,6 +1074,9 @@ with tab3:
                             
 
                 st.markdown("<hr style='margin: 0.5em 0; border-color: rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
+
+                st.markdown("<div style='height: 80vh; color: transparent;'>.</div>", unsafe_allow_html=True)
+
 
 
 
