@@ -22,13 +22,23 @@ st.set_page_config(
 # ==========================================
 # 🌟 1. 終極暴力 CSS：鎖定螢幕、模糊背景、獵殺圖示
 # ==========================================
+# --- 讀取背景圖 ---
 bg_path = "background.png" 
 bg_b64 = ""
 if os.path.exists(bg_path):
     with open(bg_path, "rb") as f:
         bg_b64 = base64.b64encode(f.read()).decode()
 
-# 👇 把 Meta 標籤跟 Style 全部包在同一個 st.markdown 裡面
+# 🔥 就是這裡！剛才漏掉的蘋果圖示讀取程式碼，把它加回來！
+apple_touch_icon_link = ""
+try:
+    with open("icon.png", "rb") as f:
+        icon_b64 = base64.b64encode(f.read()).decode()
+    apple_touch_icon_link = f'<link rel="apple-touch-icon" href="data:image/png;base64,{icon_b64}">'
+except Exception:
+    pass
+
+# 👇 現在變數都有了，可以安心注入黑科技了
 st.markdown(f"""
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -44,13 +54,13 @@ st.markdown(f"""
         overflow: hidden !important; 
         width: 100vw !important;
         height: 100vh !important;
-        height: 100dvh !important; /* 🔥 新增：針對 iOS 動態高度鎖死 */
-        background-color: #000000 !important; /* 確保底色是純黑 */
-        touch-action: none !important; /* 沒收瀏覽器滑動權限 */
+        height: 100dvh !important; 
+        background-color: #000000 !important; 
+        touch-action: none !important; 
         -webkit-overflow-scrolling: auto !important;
     }}
     
-    /* 👉 2. 強制所有分頁內部容器撐滿 100% 螢幕，沒內容也要撐起來！ */
+    /* 👉 2. 強制所有分頁內部容器撐滿 100% 螢幕 */
     [data-testid="stAppViewContainer"], .stApp {{
         background-color: transparent !important;
         overflow-y: auto !important; 
@@ -60,7 +70,7 @@ st.markdown(f"""
         -webkit-overflow-scrolling: touch !important;
     }}
 
-    /* 👉 3. 完美模糊背景：使用偽元素放在最底層 */
+    /* 👉 3. 完美模糊背景 */
     [data-testid="stAppViewContainer"]::before {{
         content: "";
         position: fixed;
@@ -1076,6 +1086,7 @@ with tab3:
     # 🔥 關鍵：把隱形墊高器放在「整個 tab3 的最底下」！
     # 注意它的縮排，它現在跟上面的 if/else 是平行的，代表它永遠都會出現！
     st.markdown("<div style='height: 80vh; color: transparent; pointer-events: none;'>.</div>", unsafe_allow_html=True)
+
 
 
 
