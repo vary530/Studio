@@ -575,8 +575,6 @@ with tab1:
                     
                     st.success("解析成功！資料已暫存。")
 
-                    st.markdown("<div style='height: 80vh; color: transparent;'>.</div>", unsafe_allow_html=True)
-
         # === 顯示掃描結果 (Persistent) ===
         if 'pdf_cached_data' in st.session_state and st.session_state['pdf_cached_data']:
             data = st.session_state['pdf_cached_data']
@@ -673,9 +671,10 @@ with tab1:
                         <span id="yellow-target" style="font-size: 18px; font-weight: bold;">總擔保債權總金額：{data.get('total_rights_money')}</span>
                     </div>""", unsafe_allow_html=True)
     else:
-        if not PDF_MODULE_ACTIVE:
-            st.error("找不到 `services/pdf_scanner.py`。")
-            st.markdown("<div style='height: 80vh; color: transparent;'>.</div>", unsafe_allow_html=True)
+        st.error("找不到 `services/pdf_scanner.py`。")
+
+    # 🔥 關鍵：把隱形墊高器放在「整個 tab1 的最底下」，並與 if 切齊！
+    st.markdown("<div style='height: 80vh; color: transparent; pointer-events: none;'>.</div>", unsafe_allow_html=True)
 
 # ==========================================
 # 分頁 2: 不動產物調產出
@@ -1017,12 +1016,11 @@ with tab2:
         except FileNotFoundError: st.error("找不到 `template.xlsx`。")
         except Exception as e: st.error(f"發生錯誤: {e}")
 
-       # ==========================================
+# ==========================================
 # 分頁 3: 歷史產出紀錄
 # ==========================================
 with tab3:
-    st.markdown("###  本機歷史產出紀錄")
-    
+    st.markdown("### 💾 本機歷史產出紀錄")
     
     output_dir = "outputs"
     if os.path.exists(output_dir):
@@ -1046,13 +1044,13 @@ with tab3:
                 col_file, col_dl, col_del = st.columns([0.6, 0.2, 0.2])
                 
                 with col_file:
-                    icon = "" if is_img else ""
+                    icon = "🖼️" if is_img else "📄"
                     st.markdown(f"{icon} **{f_name}**")
                     
                 with col_dl:
                     with open(f_path, "rb") as file_data:
                         st.download_button(
-                            label=" 下載",
+                            label="📥 下載",
                             data=file_data.read(),
                             file_name=f_name,
                             mime="image/jpeg" if is_img else "application/octet-stream",
@@ -1061,22 +1059,23 @@ with tab3:
                         )
                         
                 with col_del:
-                    if st.button(" 刪除", key=f"del_{f_name}", use_container_width=True):
+                    if st.button("🗑️ 刪除", key=f"del_{f_name}", use_container_width=True):
                         try:
                             os.remove(f_path) 
                             st.rerun()        
                         except Exception as e:
                             st.error(f"刪除失敗: {e}")
                             
-                # 🔥 終極破解法：如果是圖片，產生一個預覽區塊讓手機可以「長按分享」
+                # 🔥 如果是圖片，產生一個預覽區塊讓手機可以「長按分享」
                 if is_img:
                     with st.expander("點擊預覽圖片 (長按圖片即可跳出手機功能列)"):
                         st.image(f_path, use_container_width=True)
                             
-
                 st.markdown("<hr style='margin: 0.5em 0; border-color: rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
-
-                st.markdown("<div style='height: 80vh; color: transparent;'>.</div>", unsafe_allow_html=True)
+                
+    # 🔥 關鍵：把隱形墊高器放在「整個 tab3 的最底下」！
+    # 注意它的縮排，它現在跟上面的 if/else 是平行的，代表它永遠都會出現！
+    st.markdown("<div style='height: 80vh; color: transparent; pointer-events: none;'>.</div>", unsafe_allow_html=True)
 
 
 
