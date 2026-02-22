@@ -675,6 +675,7 @@ with tab1:
     else:
         if not PDF_MODULE_ACTIVE:
             st.error("找不到 `services/pdf_scanner.py`。")
+            st.markdown("<div style='height: 80vh; color: transparent;'>.</div>", unsafe_allow_html=True)
 
 # ==========================================
 # 分頁 2: 不動產物調產出
@@ -1076,6 +1077,7 @@ with tab3:
                 st.markdown("<hr style='margin: 0.5em 0; border-color: rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
 
                 st.markdown("<div style='height: 80vh; color: transparent;'>.</div>", unsafe_allow_html=True)
+
 
 
 
