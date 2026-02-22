@@ -859,13 +859,13 @@ with tab2:
                 f.write(img_bytes.getvalue())
 
             # 1. 成功提示
-            st.success("🎉 物調表圖卡繪製成功！")
+            st.success(" 物調表圖卡繪製成功")
             
             # 2. 直接在畫面上顯示圖片 (變數換成您專屬的 img_bytes)
             st.image(img_bytes, use_column_width=True)
             
             # 3. 給手機版用戶的溫馨提示
-            st.info("📱 手機版用戶：請直接「長按上方圖片」 ➜ 選擇「儲存到相簿」或「分享」即可！")
+            st.info("手機版用戶：請直接「長按上方圖片」 ➜ 選擇「儲存到相簿」或「分享」即可")
             
         except Exception as e:
             st.error(f"產生圖片時發生錯誤: {e}")
@@ -1030,7 +1030,7 @@ with tab2:
 # 分頁 3: 歷史產出紀錄
 # ==========================================
 with tab3:
-    st.markdown("### 💾 本機歷史產出紀錄")
+    st.markdown("### 本機歷史產出紀錄")
     
     output_dir = "outputs"
     if os.path.exists(output_dir):
@@ -1054,7 +1054,7 @@ with tab3:
                 col_file, col_dl, col_del = st.columns([0.6, 0.2, 0.2])
                 
                 with col_file:
-                    icon = "🖼️" if is_img else "📄"
+                    icon = "" if is_img else ""
                     st.markdown(f"{icon} **{f_name}**")
                     
                 with col_dl:
@@ -1069,7 +1069,7 @@ with tab3:
                         )
                         
                 with col_del:
-                    if st.button("🗑️ 刪除", key=f"del_{f_name}", use_container_width=True):
+                    if st.button(" 刪除", key=f"del_{f_name}", use_container_width=True):
                         try:
                             os.remove(f_path) 
                             st.rerun()        
@@ -1086,6 +1086,7 @@ with tab3:
     # 🔥 關鍵：把隱形墊高器放在「整個 tab3 的最底下」！
     # 注意它的縮排，它現在跟上面的 if/else 是平行的，代表它永遠都會出現！
     st.markdown("<div style='height: 80vh; color: transparent; pointer-events: none;'></div>", unsafe_allow_html=True)
+
 
 
 
