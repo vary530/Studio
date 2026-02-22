@@ -684,7 +684,7 @@ with tab1:
         st.error("找不到 `services/pdf_scanner.py`。")
 
     # 🔥 關鍵：把隱形墊高器放在「整個 tab1 的最底下」，並與 if 切齊！
-    st.markdown("<div style='height: 80vh; color: transparent; pointer-events: none;'>.</div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 80vh; color: transparent; pointer-events: none;'></div>", unsafe_allow_html=True)
 
 # ==========================================
 # 分頁 2: 不動產物調產出
@@ -1025,7 +1025,7 @@ with tab2:
             
         except FileNotFoundError: st.error("找不到 `template.xlsx`。")
         except Exception as e: st.error(f"發生錯誤: {e}")
-
+    st.markdown("<div style='height: 3rem;'></div>", unsafe_allow_html=True)
 # ==========================================
 # 分頁 3: 歷史產出紀錄
 # ==========================================
@@ -1085,7 +1085,8 @@ with tab3:
                 
     # 🔥 關鍵：把隱形墊高器放在「整個 tab3 的最底下」！
     # 注意它的縮排，它現在跟上面的 if/else 是平行的，代表它永遠都會出現！
-    st.markdown("<div style='height: 80vh; color: transparent; pointer-events: none;'>.</div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 80vh; color: transparent; pointer-events: none;'></div>", unsafe_allow_html=True)
+
 
 
 
